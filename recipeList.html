@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Recipe Box</title>
+  <script src="https://unpkg.com/react@15.3.2/dist/react.js"></script>
+  <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+  <style>
+    #container {
+      border: 1px solid red;
+      height: 500px;
+    }
+    #add-button {
+      border: 1px solid green;
+      height: 200px;
+    }
+    .buttonStyle {
+      font-size:20px;
+      background-color: blue;
+      color:white;
+      border-radius: 5px;
+      padding:15px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <h1>Recipe Box</h1>
+  <div id="container"></div>
+  <div id="add-button"></div>
+
+
+  <script type="text/babel">
+    var destination = document.querySelector("#container");
+
+    var AddRecipe = React.createClass({
+      render: function() {
+        return (
+          <button className="buttonStyle">Add</button>
+        )
+      }
+    })
+
+    ReactDOM.render(
+      <AddRecipe />,
+      document.getElementById("add-button")
+    );
+  </script>
+</body>
+
+</html>
