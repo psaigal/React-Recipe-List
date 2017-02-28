@@ -29,7 +29,6 @@
       border-radius: 5px;
       padding:15px;
     }
-
   </style>
 </head>
 
@@ -41,11 +40,25 @@
   <script type="text/babel">
     var destination = document.querySelector("#container");
 
+    var RecipeListItem = React.createClass({
+      blah: function() {
+        recipeEntryList
+      },
+      render: function() {
+        return(
+          <div>
+            <p>Hello</p>
+          </div>
+        )
+      }
+    })
+
     var AddRecipeModal = React.createClass({
       getInitialState: function() {
         return {
           recipeName: '',
-          ingredients: ''
+          ingredients: '',
+          list: []
         };
       },
       recipeNameChange: function(e) {
@@ -54,33 +67,44 @@
       ingredientsChange: function(e) {
          this.setState({ingredients: e.target.value});
       },
-      addRecipeItem: function() {
-        console.log("Recipe Name: " + this.state.recipeName);
-        console.log("Ingredients Name: " + this.state.ingredients);
+      addRecipeItem: function(e) {
+        e.preventDefault();
+        var listArray = this.state.list;
+        listArray.push({
+          name: this.state.recipeName,
+          key: Date.now()
+        });
+        this.setState({
+          list: listArray
+        })
       },
       render: function() {
         return (
-          <div id="myModal" className="modal fade" role="dialog">
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <button type="button" className="close" data-dismiss="modal">&times;</button>
-                  <h4 className="modal-title">Add a New Recipe</h4>
-                </div>
-                <div className="modal-body">
-                <form>
-                  <p>Recipe Name</p>
-                  <input type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
-                  <p>Ingredients</p>
-                  <textarea placeholder="Ingredients" value={this.state.ingredients} onChange={this.ingredientsChange}></textarea>
-                  <button onClick={this.addRecipeItem} type="submit" className="btn btn-default">Add Recipe</button>
-                </form>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+          <div>
+            <div id="myModal" className="modal fade" role="dialog">
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <button type="button" className="close" data-dismiss="modal">&times;</button>
+                    <h4 className="modal-title text-center">Add a New Recipe</h4>
+                  </div>
+                  <div className="modal-body">
+                  <form>
+                    <h4>Recipe Name</h4>
+                    <input type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
+                    <h4>Ingredients</h4>
+                    <textarea id="text-ingredients" placeholder="Ingredients" value={this.state.ingredients} onChange={this.ingredientsChange}></textarea>
+                    <p></p>
+                    <button onClick={this.addRecipeItem} type="submit" className="btn btn-default">Add Recipe</button>
+                  </form>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
                 </div>
               </div>
             </div>
+            <RecipeListItem recipeEntryList={this.state.list} />
           </div>
         )
       }
