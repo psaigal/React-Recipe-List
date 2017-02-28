@@ -41,15 +41,18 @@
     var destination = document.querySelector("#container");
 
     var RecipeListItem = React.createClass({
-      blah: function() {
-        recipeEntryList
-      },
       render: function() {
-        return(
+        var entries = this.props.recipeEntryList;
+        var displayRecipeItems = entries.map(function(listItem){
+          return <li key = {listItem.key}>Recipe Name:{listItem.name}<br /> Ingredients:{listItem.description}</li>
+        })
+        return (
           <div>
-            <p>Hello</p>
+            <p>
+              {displayRecipeItems}
+            </p>
           </div>
-        )
+        );
       }
     })
 
@@ -68,15 +71,17 @@
          this.setState({ingredients: e.target.value});
       },
       addRecipeItem: function(e) {
-        e.preventDefault();
         var listArray = this.state.list;
         listArray.push({
           name: this.state.recipeName,
+          description: this.state.ingredients,
           key: Date.now()
         });
         this.setState({
           list: listArray
         })
+        console.log(listArray.length);
+        e.preventDefault();
       },
       render: function() {
         return (
