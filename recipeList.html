@@ -15,27 +15,54 @@
 
   <style>
     #container {
-      border: 1px solid red;
+      margin-top: 30px;
       height: 500px;
+    }
+    ul {
+      list-style-type: none;
+      padding:0px;
+    }
+    li {
+      font-size: 25px;
+      color:black;
+      text-align: center;
     }
     #add-button {
       border: 1px solid green;
       height: 200px;
     }
-    .buttonStyle {
-      font-size:20px;
-      background-color: blue;
+    input[type="text"] {
+      display: block;
+      margin : 0 auto;
+    }
+    #text-ingredients {
+      display: block;
+      margin : 0 auto;
+    }
+    .modal-header {
+      background-color: #5bc0de;
+    }
+    .modal-title {
       color:white;
-      border-radius: 5px;
-      padding:15px;
+    }
+    #submit-recipe {
+      display: block;
+      margin : 0 auto;
+    }
+    #open-recipe-modal {
+      margin-top: 25px;
     }
   </style>
 </head>
 
 <body>
-  <h1 class="text-center">Recipe Box</h1>
-  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Recipe</button>
-  <div id="container"></div>
+  <div class="row text-center">
+    <h1 class="text-center">Recipe Box</h1>
+    <button type="button" id="open-recipe-modal" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Recipe</button>
+  </div>
+  <div class="row">
+    <div class="col-md-2 col-md-offset-5" id="container"></div>
+  </div>
 
   <script type="text/babel">
     var destination = document.querySelector("#container");
@@ -52,8 +79,12 @@
           <div>
             <h5 className="text-center">Ingredients</h5>
             <p className="text-center">{this.props.textIngredients}</p>
-            <button type="button" onClick={this.deleteRecipe}>Delete</button>
-            <button type="button" onClick={this.editModalHeader} className="btn btn-info" data-toggle="modal" data-target="#myModal">Edit</button>
+            <div className="row">
+              <div className="col-md-2 col-md-offset-5">
+                <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
+                <button type="button" onClick={this.editModalHeader} className="btn btn-info" data-toggle="modal" data-target="#myModal">Edit</button>
+              </div>
+            </div>
           </div>
         )
       }
@@ -70,7 +101,7 @@
         var displayRecipeItems = entries.map(function(listItem){
           return(
             <div className="recipe-list-item">
-              <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)}>Recipe Name: {listItem.name}</a></li>
+              <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)}>{listItem.name}</a></li>
               <div className="row">
                 <div className="span4 collapse-group">
                    <div className="collapse" key={listItem.key}><RecipeItem textIngredients={listItem.description} /></div>
@@ -122,16 +153,16 @@
                 <div className="modal-content">
                   <div className="modal-header">
                     <button type="button" className="close" data-dismiss="modal">&times;</button>
-                    <h4 className="modal-title text-center">Add a New Recipe</h4>
+                    <h3 className="modal-title text-center">Add a New Recipe</h3>
                   </div>
                   <div className="modal-body">
                   <form id="add-recipe-form">
-                    <h4>Recipe Name</h4>
-                    <input type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
-                    <h4>Ingredients</h4>
-                    <textarea id="text-ingredients" placeholder="Ingredients" value={this.state.ingredients} onChange={this.ingredientsChange}></textarea>
+                    <h4 className="text-center">Recipe Name</h4>
+                    <input className="text-center" type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
+                    <h4 className="text-center">Ingredients</h4>
+                    <textarea className="text-center" id="text-ingredients" placeholder="Ingredients" value={this.state.ingredients} onChange={this.ingredientsChange}></textarea>
                     <p></p>
-                    <button onClick={this.addRecipeItem} type="submit" className="btn btn-default">Add Recipe</button>
+                    <button onClick={this.addRecipeItem} type="submit" className="btn btn-default btn-info" id="submit-recipe">Add Recipe</button>
                   </form>
                   </div>
                   <div className="modal-footer">
