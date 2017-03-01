@@ -42,15 +42,18 @@
 
      var RecipeItem = React.createClass({
       editModalHeader: function() {
-        console.log(1234);
         jQuery('.modal-title').text("Edit Recipe");
+      },
+      deleteRecipe: function(e) {
+        console.log(e.target);
+        jQuery(e.target).parents('.recipe-list-item').remove();
       },
       render: function() {
         return(
           <div>
             <h5 className="text-center">Ingredients</h5>
             <p className="text-center">{this.props.textIngredients}</p>
-            <button>Delete</button>
+            <button type="button" onClick={this.deleteRecipe}>Delete</button>
             <button type="button" onClick={this.editModalHeader} className="btn btn-info" data-toggle="modal" data-target="#myModal">Edit</button>
           </div>
         )
@@ -68,7 +71,7 @@
         var displayRecipeItems = entries.map(function(listItem){
           console.log(this);
           return(
-            <div>
+            <div className="recipe-list-item">
               <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)}>Recipe Name: {listItem.name}</a></li>
               <div className="row">
                 <div className="span4 collapse-group">
