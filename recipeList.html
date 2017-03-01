@@ -40,18 +40,27 @@
   <script type="text/babel">
     var destination = document.querySelector("#container");
 
-     // var RecipeItem = React.createClass({
-     //  render: function() {
-     //    <div>Hello</div>
-     //  }
-     // })
+     var RecipeItem = React.createClass({
+      editModalHeader: function() {
+        console.log(1234);
+        jQuery('.modal-title').text("Edit Recipe");
+      },
+      render: function() {
+        return(
+          <div>
+            <h5 className="text-center">Ingredients</h5>
+            <p className="text-center">{this.props.textIngredients}</p>
+            <button>Delete</button>
+            <button type="button" onClick={this.editModalHeader} className="btn btn-info" data-toggle="modal" data-target="#myModal">Edit</button>
+          </div>
+        )
+      }
+     })
 
     var RecipeListItems = React.createClass({
       handleClick: function(e){
-        console.log(e.target);
         e.preventDefault();
         var blah = jQuery(e.target).parents('li').siblings().find('.collapse');
-        console.log(blah);
         blah.collapse('toggle');
       },
       render: function() {
@@ -63,18 +72,16 @@
               <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)}>Recipe Name: {listItem.name}</a></li>
               <div className="row">
                 <div className="span4 collapse-group">
-                   <p className="collapse" key={listItem.key}>{listItem.description}</p>
+                   <div className="collapse" key={listItem.key}><RecipeItem textIngredients={listItem.description} /></div>
                 </div>
               </div>
             </div>
           )
         },this)
         return (
-          <div>
-            <ul>
-              {displayRecipeItems}
-            </ul>
-          </div>
+          <ul>
+            {displayRecipeItems}
+          </ul>
         );
       }
     })
