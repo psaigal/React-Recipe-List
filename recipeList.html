@@ -45,7 +45,6 @@
         jQuery('.modal-title').text("Edit Recipe");
       },
       deleteRecipe: function(e) {
-        console.log(e.target);
         jQuery(e.target).parents('.recipe-list-item').remove();
       },
       render: function() {
@@ -69,7 +68,6 @@
       render: function() {
         var entries = this.props.recipeEntryList;
         var displayRecipeItems = entries.map(function(listItem){
-          console.log(this);
           return(
             <div className="recipe-list-item">
               <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)}>Recipe Name: {listItem.name}</a></li>
@@ -104,6 +102,8 @@
          this.setState({ingredients: e.target.value});
       },
       addRecipeItem: function(e) {
+        jQuery("#add-recipe-form").find("input[type=text], textarea").val(" ");
+        $('#myModal').modal('hide');
         var listArray = this.state.list;
         listArray.push({
           name: this.state.recipeName,
@@ -113,8 +113,6 @@
         this.setState({
           list: listArray
         })
-        console.log(listArray.length);
-        e.preventDefault();
       },
       render: function() {
         return (
@@ -127,7 +125,7 @@
                     <h4 className="modal-title text-center">Add a New Recipe</h4>
                   </div>
                   <div className="modal-body">
-                  <form>
+                  <form id="add-recipe-form">
                     <h4>Recipe Name</h4>
                     <input type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
                     <h4>Ingredients</h4>
