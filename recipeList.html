@@ -31,6 +31,9 @@
       border: 1px solid green;
       height: 200px;
     }
+    #edit-recipe {
+      display:none;
+    }
     input[type="text"] {
       display: block;
       margin : 0 auto;
@@ -51,6 +54,13 @@
     }
     #open-recipe-modal {
       margin-top: 25px;
+    }
+    .ingredients-container {
+      border-radius: 10px;
+      padding: 10px;
+      margin: 15px;
+      border: 1px solid #5bc0de;
+      color: #5bc0de;
     }
   </style>
 </head>
@@ -77,29 +87,55 @@
         },this)
         return (
           <div>
-            {formatIngredients}
+            <h3 className="text-center">Ingredients</h3>
+            <div id="ingredients-list">
+              {formatIngredients}
+            </div>
           </div>
         )
       }
     });
 
      var RecipeItem = React.createClass({
-      editModalHeader: function() {
+      getInitialState: function() {
+        return {
+          isEdit: false
+        };
+      },
+      editModalInfo: function(e) {
+        this.setState({
+          isEdit: true
+        })
+        var textArea = "";
         jQuery('.modal-title').text("Edit Recipe");
-        console.log(this.props.textIngredients);
+        jQuery('#edit-recipe').css('display', 'block');
+        jQuery('#submit-recipe').css('display', 'none');
+        jQuery(e.target).parents('.ingredients-container').find('#ingredients-list').children();
+        var arr = jQuery(e.target).parents('.ingredients-container').find('#ingredients-list').children("p");
+        console.log(arr);
+        for(var i = 0; i <= (arr.length)-1; i ++ ) {
+          textArea += arr[i].innerHTML + " ";
+        }
+        textArea = textArea.split(' ');
+        textArea.pop();
+        console.log(textArea);
+        textArea = textArea.join();
+        console.log(textArea);
+        jQuery("#text-ingredients").val(textArea);
+        var blah = jQuery(e.target).closest('.recipe-list-item').find('a')[0].innerHTML;
+        jQuery("#recipe-name-input").val(blah);
       },
       deleteRecipe: function(e) {
         jQuery(e.target).parents('.recipe-list-item').remove();
       },
       render: function() {
         return(
-          <div>
-            <h5 className="text-center">Ingredients</h5>
+          <div className="ingredients-container">
             <div className="text-center"><Ingredients ingredientList={this.props.textIngredients} /></div>
             <div className="row">
               <div className="col-md-2 col-md-offset-5">
                 <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
-                <button type="button" onClick={this.editModalHeader} className="btn btn-info" data-toggle="modal" data-target="#myModal">Edit</button>
+                <button type="button" onClick={this.editModalInfo} id="edit" className="btn btn-info" data-toggle="modal" data-target="#myModal">Edit</button>
               </div>
             </div>
           </div>
@@ -108,30 +144,50 @@
      })
 
     var RecipeListItems = React.createClass({
+       getInitialState: function() {
+        return {
+          sup:" "
+        };
+      },
       handleClick: function(e){
+        console.log(jQuery(e.target).parent().parent('.recipe-list-item').find('#ingredients-list'));
+        this.setState({
+          sup: jQuery(e.target).parent().parent('.recipe-list-item').find('#ingredients-list')
+        })
         e.preventDefault();
         var blah = jQuery(e.target).parents('li').siblings().find('.collapse');
         blah.collapse('toggle');
       },
       render: function() {
         var entries = this.props.recipeEntryList;
+        var isEdited = this.props.edit;
+        console.log(this.state.sup[0]);
         var displayRecipeItems = entries.map(function(listItem){
           return(
             <div className="recipe-list-item">
-              <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)}>{listItem.name}</a></li>
+              <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)} >{listItem.name}</a></li>
               <div className="row">
                 <div className="span4 collapse-group">
-                   <div className="collapse" key={listItem.key}><RecipeItem textIngredients={listItem.description} /></div>
+                   <div className="collapse" key={listItem.key}><RecipeItem textIngredients={listItem.description} editRecipe={this.props.editList} /></div>
                 </div>
               </div>
             </div>
           )
         },this)
-        return (
-          <ul>
-            {displayRecipeItems}
-          </ul>
-        );
+        if (!isEdited) {
+          return (
+            <ul>
+              {displayRecipeItems}
+            </ul>
+          );
+        }
+        else {
+          return (
+            <p>
+              {this.state.sup.html(displayRecipeItems)}
+            </p>
+          )
+        }
       }
     })
 
@@ -140,7 +196,8 @@
         return {
           recipeName: '',
           ingredients: '',
-          list: []
+          list: [],
+          editList: false
         };
       },
       recipeNameChange: function(e) {
@@ -156,11 +213,25 @@
         listArray.push({
           name: this.state.recipeName,
           description: this.state.ingredients,
-          key: Date.now()
+          key: Date.now(),
         });
         listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
         this.setState({
           list: listArray
+        })
+      },
+      editRecipeItem: function(e) {
+        $('#myModal').modal('hide');
+        var listArray = this.state.list;
+        listArray.push({
+          name: this.state.recipeName,
+          description: this.state.ingredients,
+          key: Date.now()
+        });
+        listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
+        this.setState({
+          list: listArray,
+          editList: true
         })
       },
       render: function() {
@@ -176,11 +247,13 @@
                   <div className="modal-body">
                   <form id="add-recipe-form">
                     <h4 className="text-center">Recipe Name</h4>
-                    <input className="text-center" type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
+                    <input className="text-center" id="recipe-name-input" type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
                     <h4 className="text-center">Ingredients</h4>
+                    <p className="text-center">Please separate each ingredient with a comma</p>
                     <textarea className="text-center" id="text-ingredients" placeholder="Ingredients" value={this.state.ingredients} onChange={this.ingredientsChange}></textarea>
                     <p></p>
                     <button onClick={this.addRecipeItem} type="submit" className="btn btn-default btn-info" id="submit-recipe">Add Recipe</button>
+                     <button onClick={this.editRecipeItem} type="submit" className="btn btn-default btn-info" id="edit-recipe">Edit Recipe</button>
                   </form>
                   </div>
                   <div className="modal-footer">
@@ -189,7 +262,7 @@
                 </div>
               </div>
             </div>
-            <RecipeListItems recipeEntryList={this.state.list} />
+            <RecipeListItems recipeEntryList={this.state.list} edit={this.state.editList} />
           </div>
         )
       }
