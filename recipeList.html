@@ -99,7 +99,8 @@
      var RecipeItem = React.createClass({
       getInitialState: function() {
         return {
-          isEdit: false
+          isEdit: false,
+          stuff: this.props.textIngredients
         };
       },
       editModalInfo: function(e) {
@@ -124,6 +125,9 @@
         jQuery("#text-ingredients").val(textArea);
         var blah = jQuery(e.target).closest('.recipe-list-item').find('a')[0].innerHTML;
         jQuery("#recipe-name-input").val(blah);
+        this.setState({
+          stuff: blah.split(",")
+        })
       },
       deleteRecipe: function(e) {
         jQuery(e.target).parents('.recipe-list-item').remove();
@@ -131,7 +135,7 @@
       render: function() {
         return(
           <div className="ingredients-container">
-            <div className="text-center"><Ingredients ingredientList={this.props.textIngredients} /></div>
+            <div className="text-center"><Ingredients ingredientList={this.state.stuff} /></div>
             <div className="row">
               <div className="col-md-2 col-md-offset-5">
                 <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
@@ -184,7 +188,7 @@
         else {
           return (
             <p>
-              {this.state.sup.html(displayRecipeItems)}
+              <div>hello</div>
             </p>
           )
         }
@@ -207,6 +211,7 @@
          this.setState({ingredients: e.target.value});
       },
       addRecipeItem: function(e) {
+        e.preventDefault();
         jQuery("#add-recipe-form").find("input[type=text], textarea").val(" ");
         $('#myModal').modal('hide');
         var listArray = this.state.list;
