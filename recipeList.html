@@ -12,11 +12,22 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
 
   <style>
+    body {
+      font-family: 'Roboto Condensed', sans-serif;
+    }
     #container {
       margin-top: 30px;
       height: 500px;
+    }
+    p {
+      font-size: 25px;
+    }
+    .separate {
+      margin: 10px 0 10px 0;
+      border: 1px solid #e3e3e3;
     }
     ul {
       list-style-type: none;
@@ -114,10 +125,10 @@
       },
       render: function() {
         return(
-          <div className="ingredients-container">
+          <div className="ingredients-container center-block">
             <div className="text-center"><Ingredients ingredientList={this.props.textIngredients} /></div>
             <div className="row">
-              <div className="col-md-2 col-md-offset-5">
+              <div className="col-sm-12 text-center">
                 <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
                 <button onClick={this.yolo} id={this.state.recipeId} type="button" className="btn btn-info" data-toggle="modal" data-target="#myEditModal">Edit</button>
               </div>
@@ -146,13 +157,16 @@
         var isEdited = this.props.edit;
         var displayRecipeItems = entries.map(function(listItem){
           return(
-            <div className="recipe-list-item">
-              <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)} >{listItem.name}</a></li>
-              <div className="row">
-                <div className="span4 collapse-group">
-                   <div className="collapse" key={listItem.key}><RecipeItem textIngredients={listItem.description} uniqueId={listItem.key} getId={this.props.getId} /></div>
+            <div>
+              <div className="recipe-list-item">
+                <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)} >{listItem.name}</a></li>
+                <div className="row">
+                  <div className="span4 collapse-group">
+                     <div className="collapse" key={listItem.key}><RecipeItem textIngredients={listItem.description} uniqueId={listItem.key} getId={this.props.getId} /></div>
+                  </div>
                 </div>
               </div>
+              <div className="separate"></div>
             </div>
           )
         },this)
