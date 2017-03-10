@@ -100,7 +100,6 @@
      var RecipeItem = React.createClass({
       getInitialState: function() {
         return {
-          allIngredients: this.props.textIngredients,
           recipeId: this.props.uniqueId,
           id: this.props.getId
         };
@@ -110,13 +109,13 @@
         this.props.getId(jQuery(e.target).attr('id'));
       },
       deleteRecipe: function(e) {
-        console.log(this.state.id + " blahblah");
+        console.log(this.props.textIngredients + " blahblah");
         jQuery(e.target).parents('.recipe-list-item').remove();
       },
       render: function() {
         return(
           <div className="ingredients-container">
-            <div className="text-center"><Ingredients ingredientList={this.state.allIngredients} /></div>
+            <div className="text-center"><Ingredients ingredientList={this.props.textIngredients} /></div>
             <div className="row">
               <div className="col-md-2 col-md-offset-5">
                 <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
@@ -179,33 +178,34 @@
           list: listArray
         });
         listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
+        console.log(listArray);
+        console.log(this.state.list);
       },
       grabTheId: function(newId) {
         this.setState({
           individualId: newId
         });
       },
-      editRecipe: function(id,name,ingredients){
-        console.log('yolo');
+      editRecipe: function(id,name,ingredients) {
+        var editElement;
         var listArray = this.state.list;
-        // element //something of listArray
-        // element.name = name;
-        // element.description = ingredients;
-        // var ing = ingredients;
-        // var recName = name;
-        // ing = ing.split(',')
-        // this.setState({
-        //   allIngredients: ing,
-        //   recipeName: recName
-        // });
-        console.log(this.state.individualId);
-        console.log(name, ingredients);
+        var blah = this.state.individualId;
+        listArray.forEach(function(item){
+          if(item.key == blah) {
+            item.name = name;
+            item.description = ingredients;
+          }
+        });
+        this.setState({
+          list: listArray
+        });
+        this.state.list[this.state.list.length-1].description = this.state.list[this.state.list.length-1].description.split(',');
       },
       render: function() {
         return (
           <div>
             <AddModal newRecipe={this.addRecipe.bind(this)}  />
-            <EditModal blah={this.editRecipe.bind(this)} />
+            <EditModal blah={this.editRecipe.bind(this)} theId={this.state.individualId} />
             <RecipeListItems recipeEntryList={this.state.list} getId={this.grabTheId.bind(this)} />
           </div>
         )
@@ -276,13 +276,14 @@
         console.log("0909090909090909090");
         this.setState({ingredients: e.target.value});
       },
-      // uniqueId: function() {
-      //   console.log(jQuery('#myEditModal').attr('class'));
-      // }
+      setId: function() {
+        this.setState({id: this.props.theId});
+      },
       editSubmitRecipe: function(e) {
         e.preventDefault();
+        this.setId();
         $('#myEditModal').modal('toggle');
-        return this.props.blah(this.state.recipeName, this.state.ingredients);
+        return this.props.blah(this.state.id, this.state.recipeName, this.state.ingredients);
       },
       render: function() {
         return (
