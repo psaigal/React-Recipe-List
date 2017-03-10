@@ -103,8 +103,16 @@
           stuff: this.props.textIngredients
         };
       },
-      editRecipe:
-
+      editRecipe: function(ingredients){
+        console.log('priyanka');
+        var x = ingredients;
+        console.log(this.state.stuff);
+        console.log(x);
+        x = x.split(',')
+        this.setState({
+          stuff: x
+        });
+      },
       deleteRecipe: function(e) {
         jQuery(e.target).parents('.recipe-list-item').remove();
       },
@@ -115,9 +123,10 @@
             <div className="row">
               <div className="col-md-2 col-md-offset-5">
                 <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
-                <button type="button" id="edit" className="btn btn-info" data-toggle="modal" data-target="#myEditModal"><EditModal /></button>
+                <button type="button" id="edit" className="btn btn-info" data-toggle="modal" data-target="#myEditModal">Edit Modal</button>
               </div>
             </div>
+            <EditModal blah={this.editRecipe.bind(this)} />
           </div>
         )
       }
@@ -154,20 +163,11 @@
             </div>
           )
         },this)
-        if (!isEdited) {
-          return (
-            <ul>
-              {displayRecipeItems}
-            </ul>
-          );
-        }
-        else {
-          return (
-            <p>
-              <div>hello</div>
-            </p>
-          )
-        }
+        return (
+          <ul>
+            {displayRecipeItems}
+          </ul>
+        );
       }
     })
 
@@ -188,25 +188,24 @@
         listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
         console.log(this.state.list);
       },
-      editRecipe: function(e) {
-        $('#myModal').modal('hide');
-        var listArray = this.state.list;
-        listArray.push({
-          name: this.state.recipeName,
-          description: this.state.ingredients,
-          key: Date.now()
-        });
-        listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
-        this.setState({
-          list: listArray,
-          editList: true
-        })
-      },
+      // editRecipe: function(e) {
+      //   $('#myModal').modal('hide');
+      //   var listArray = this.state.list;
+      //   listArray.push({
+      //     name: this.state.recipeName,
+      //     description: this.state.ingredients,
+      //     key: Date.now()
+      //   });
+      //   listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
+      //   this.setState({
+      //     list: listArray,
+      //     editList: true
+      //   })
+      // },
       render: function() {
         return (
           <div>
             <AddModal newRecipe={this.addRecipe.bind(this)}  />
-            <EditModal editRecipe={this.editRecipe.bind(this)} />
             <RecipeListItems recipeEntryList={this.state.list} edit={this.state.editList} />
           </div>
         )
@@ -276,17 +275,17 @@
         };
       },
       recipeNameChange: function(e) {
-        console.log(1234);
+        console.log("121212121212121212121212");
         this.setState({recipeName: e.target.value});
       },
       ingredientsChange: function(e) {
-        console.log(5678);
+        console.log("0909090909090909090");
         this.setState({ingredients: e.target.value});
       },
       editSubmitRecipe: function(e) {
         e.preventDefault();
         $('#myModal').modal('hide');
-        return this.props.editRecipe(this.state.recipeName,this.state.ingredients);
+        return this.props.blah(this.state.ingredients);
       },
       render: function() {
         return (
