@@ -103,32 +103,8 @@
           stuff: this.props.textIngredients
         };
       },
-      editModalInfo: function(e) {
-        this.setState({
-          isEdit: true
-        })
-        var textArea = "";
-        jQuery('.modal-title').text("Edit Recipe");
-        jQuery('#edit-recipe').css('display', 'block');
-        jQuery('#submit-recipe').css('display', 'none');
-        jQuery(e.target).parents('.ingredients-container').find('#ingredients-list').children();
-        var arr = jQuery(e.target).parents('.ingredients-container').find('#ingredients-list').children("p");
-        console.log(arr);
-        for(var i = 0; i <= (arr.length)-1; i ++ ) {
-          textArea += arr[i].innerHTML + " ";
-        }
-        textArea = textArea.split(' ');
-        textArea.pop();
-        console.log(textArea);
-        textArea = textArea.join();
-        console.log(textArea);
-        jQuery("#text-ingredients").val(textArea);
-        var blah = jQuery(e.target).closest('.recipe-list-item').find('a')[0].innerHTML;
-        jQuery("#recipe-name-input").val(blah);
-        this.setState({
-          stuff: blah.split(",")
-        })
-      },
+      editRecipe:
+
       deleteRecipe: function(e) {
         jQuery(e.target).parents('.recipe-list-item').remove();
       },
@@ -139,7 +115,7 @@
             <div className="row">
               <div className="col-md-2 col-md-offset-5">
                 <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
-                <button type="button" onClick={this.editModalInfo} id="edit" className="btn btn-info" data-toggle="modal" data-target="#myModal">Edit</button>
+                <button type="button" id="edit" className="btn btn-info" data-toggle="modal" data-target="#myEditModal"><EditModal /></button>
               </div>
             </div>
           </div>
@@ -195,37 +171,24 @@
       }
     })
 
-    var AddRecipeModal = React.createClass({
+    var App = React.createClass({
       getInitialState: function() {
         return {
-          recipeName: '',
-          ingredients: '',
           list: [],
           editList: false
         };
       },
-      recipeNameChange: function(e) {
-         this.setState({recipeName: e.target.value});
-      },
-      ingredientsChange: function(e) {
-         this.setState({ingredients: e.target.value});
-      },
-      addRecipeItem: function(e) {
-        e.preventDefault();
-        jQuery("#add-recipe-form").find("input[type=text], textarea").val(" ");
-        $('#myModal').modal('hide');
+      addRecipe: function(name, ingredients) {
+        console.log('higuighyuguhjvb');
         var listArray = this.state.list;
-        listArray.push({
-          name: this.state.recipeName,
-          description: this.state.ingredients,
-          key: Date.now(),
-        });
-        listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
+        listArray.push({name: name, description: ingredients, key:Date.now()});
         this.setState({
           list: listArray
-        })
+        });
+        listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
+        console.log(this.state.list);
       },
-      editRecipeItem: function(e) {
+      editRecipe: function(e) {
         $('#myModal').modal('hide');
         var listArray = this.state.list;
         listArray.push({
@@ -242,39 +205,121 @@
       render: function() {
         return (
           <div>
-            <div id="myModal" className="modal fade" role="dialog">
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <button type="button" className="close" data-dismiss="modal">&times;</button>
-                    <h3 className="modal-title text-center">Add a New Recipe</h3>
-                  </div>
-                  <div className="modal-body">
-                  <form id="add-recipe-form">
-                    <h4 className="text-center">Recipe Name</h4>
-                    <input className="text-center" id="recipe-name-input" type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
-                    <h4 className="text-center">Ingredients</h4>
-                    <p className="text-center">Please separate each ingredient with a comma</p>
-                    <textarea className="text-center" id="text-ingredients" placeholder="Ingredients" value={this.state.ingredients} onChange={this.ingredientsChange}></textarea>
-                    <p></p>
-                    <button onClick={this.addRecipeItem} type="submit" className="btn btn-default btn-info" id="submit-recipe">Add Recipe</button>
-                     <button onClick={this.editRecipeItem} type="submit" className="btn btn-default btn-info" id="edit-recipe">Edit Recipe</button>
-                  </form>
-                  </div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <AddModal newRecipe={this.addRecipe.bind(this)}  />
+            <EditModal editRecipe={this.editRecipe.bind(this)} />
             <RecipeListItems recipeEntryList={this.state.list} edit={this.state.editList} />
           </div>
         )
       }
     })
 
+    var AddModal = React.createClass({
+      getInitialState: function() {
+        return {
+          recipeName: '',
+          ingredients: ''
+        };
+      },
+      recipeNameChange: function(e) {
+        console.log(1234);
+        this.setState({recipeName: e.target.value});
+      },
+      ingredientsChange: function(e) {
+        console.log(5678);
+        this.setState({ingredients: e.target.value});
+      },
+      submitRecipe: function(e) {
+        e.preventDefault();
+        $('#myModal').modal('hide');
+        return this.props.newRecipe(this.state.recipeName,this.state.ingredients);
+      },
+      editRecipe: function(e) {
+        e.preventDefault();
+        $('#myModal').modal('hide');
+        return this.props.newRecipe(this.state.recipeName,this.state.ingredients);
+      },
+      render: function() {
+        return (
+          <div id="myModal" className="modal fade" role="dialog">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <button type="button" className="close" data-dismiss="modal">&times;</button>
+                  <h3 className="modal-title text-center">Add a New Recipe</h3>
+                </div>
+                <div className="modal-body">
+                <form id="add-recipe-form">
+                  <h4 className="text-center">Recipe Name</h4>
+                  <input className="text-center" id="recipe-name-input" type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
+                  <h4 className="text-center">Ingredients</h4>
+                  <p className="text-center">Please separate each ingredient with a comma</p>
+                  <textarea className="text-center" id="text-ingredients" placeholder="Ingredients" value={this.state.ingredients} onChange={this.ingredientsChange}></textarea>
+                  <p></p>
+                  <button onClick={this.submitRecipe} type="submit" className="btn btn-default btn-info" id="submit-recipe">Add Recipe</button>
+                </form>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    })
+
+    var EditModal = React.createClass({
+      getInitialState: function() {
+        return {
+          recipeName: '',
+          ingredients: ''
+        };
+      },
+      recipeNameChange: function(e) {
+        console.log(1234);
+        this.setState({recipeName: e.target.value});
+      },
+      ingredientsChange: function(e) {
+        console.log(5678);
+        this.setState({ingredients: e.target.value});
+      },
+      editSubmitRecipe: function(e) {
+        e.preventDefault();
+        $('#myModal').modal('hide');
+        return this.props.editRecipe(this.state.recipeName,this.state.ingredients);
+      },
+      render: function() {
+        return (
+          <div id="myEditModal" className="modal fade" role="dialog">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <button type="button" className="close" data-dismiss="modal">&times;</button>
+                  <h3 className="modal-title text-center">Edit Recipe</h3>
+                </div>
+                <div className="modal-body">
+                <form id="add-recipe-form">
+                  <h4 className="text-center">Recipe Name</h4>
+                  <input className="text-center" id="recipe-name-input" type="text" placeholder="Recipe Name" value={this.state.recipeName} onChange={this.recipeNameChange}></input>
+                  <h4 className="text-center">Ingredients</h4>
+                  <p className="text-center">Please separate each ingredient with a comma</p>
+                  <textarea className="text-center" id="text-ingredients" placeholder="Ingredients" value={this.state.ingredients} onChange={this.ingredientsChange}></textarea>
+                  <p></p>
+                  <button onClick={this.editSubmitRecipe} type="submit" className="btn btn-default btn-info" id="submit-recipe">Edit Recipe</button>
+                </form>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    })
+
     ReactDOM.render(
-      <AddRecipeModal />,
+      <App />,
       document.getElementById("container")
     );
   </script>
