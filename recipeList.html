@@ -31,9 +31,6 @@
       border: 1px solid green;
       height: 200px;
     }
-    #edit-recipe {
-      display:none;
-    }
     input[type="text"] {
       display: block;
       margin : 0 auto;
@@ -61,6 +58,10 @@
       margin: 15px;
       border: 1px solid #5bc0de;
       color: #5bc0de;
+    }
+    #myEditModal {
+      z-index: 10000;
+      border: 2px solid red;
     }
   </style>
 </head>
@@ -99,34 +100,29 @@
      var RecipeItem = React.createClass({
       getInitialState: function() {
         return {
-          isEdit: false,
-          stuff: this.props.textIngredients
+          allIngredients: this.props.textIngredients,
+          recipeId: this.props.uniqueId,
+          id: this.props.getId
         };
       },
-      editRecipe: function(ingredients){
-        console.log('priyanka');
-        var x = ingredients;
-        console.log(this.state.stuff);
-        console.log(x);
-        x = x.split(',')
-        this.setState({
-          stuff: x
-        });
+      yolo: function(e) {
+        console.log("ewfwefwe")
+        this.props.getId(jQuery(e.target).attr('id'));
       },
       deleteRecipe: function(e) {
+        console.log(this.state.id + " blahblah");
         jQuery(e.target).parents('.recipe-list-item').remove();
       },
       render: function() {
         return(
           <div className="ingredients-container">
-            <div className="text-center"><Ingredients ingredientList={this.state.stuff} /></div>
+            <div className="text-center"><Ingredients ingredientList={this.state.allIngredients} /></div>
             <div className="row">
               <div className="col-md-2 col-md-offset-5">
                 <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
-                <button type="button" id="edit" className="btn btn-info" data-toggle="modal" data-target="#myEditModal">Edit Modal</button>
+                <button onClick={this.yolo} id={this.state.recipeId} type="button" className="btn btn-info" data-toggle="modal" data-target="#myEditModal">Edit</button>
               </div>
             </div>
-            <EditModal blah={this.editRecipe.bind(this)} />
           </div>
         )
       }
@@ -139,7 +135,6 @@
         };
       },
       handleClick: function(e){
-        console.log(jQuery(e.target).parent().parent('.recipe-list-item').find('#ingredients-list'));
         this.setState({
           sup: jQuery(e.target).parent().parent('.recipe-list-item').find('#ingredients-list')
         })
@@ -150,14 +145,13 @@
       render: function() {
         var entries = this.props.recipeEntryList;
         var isEdited = this.props.edit;
-        console.log(this.state.sup[0]);
         var displayRecipeItems = entries.map(function(listItem){
           return(
             <div className="recipe-list-item">
               <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)} >{listItem.name}</a></li>
               <div className="row">
                 <div className="span4 collapse-group">
-                   <div className="collapse" key={listItem.key}><RecipeItem textIngredients={listItem.description} editRecipe={this.props.editList} /></div>
+                   <div className="collapse" key={listItem.key}><RecipeItem textIngredients={listItem.description} uniqueId={listItem.key} getId={this.props.getId} /></div>
                 </div>
               </div>
             </div>
@@ -175,38 +169,44 @@
       getInitialState: function() {
         return {
           list: [],
-          editList: false
+          individualId: ''
         };
       },
       addRecipe: function(name, ingredients) {
-        console.log('higuighyuguhjvb');
         var listArray = this.state.list;
         listArray.push({name: name, description: ingredients, key:Date.now()});
         this.setState({
           list: listArray
         });
         listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
-        console.log(this.state.list);
       },
-      // editRecipe: function(e) {
-      //   $('#myModal').modal('hide');
-      //   var listArray = this.state.list;
-      //   listArray.push({
-      //     name: this.state.recipeName,
-      //     description: this.state.ingredients,
-      //     key: Date.now()
-      //   });
-      //   listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
-      //   this.setState({
-      //     list: listArray,
-      //     editList: true
-      //   })
-      // },
+      grabTheId: function(newId) {
+        this.setState({
+          individualId: newId
+        });
+      },
+      editRecipe: function(id,name,ingredients){
+        console.log('yolo');
+        var listArray = this.state.list;
+        // element //something of listArray
+        // element.name = name;
+        // element.description = ingredients;
+        // var ing = ingredients;
+        // var recName = name;
+        // ing = ing.split(',')
+        // this.setState({
+        //   allIngredients: ing,
+        //   recipeName: recName
+        // });
+        console.log(this.state.individualId);
+        console.log(name, ingredients);
+      },
       render: function() {
         return (
           <div>
             <AddModal newRecipe={this.addRecipe.bind(this)}  />
-            <RecipeListItems recipeEntryList={this.state.list} edit={this.state.editList} />
+            <EditModal blah={this.editRecipe.bind(this)} />
+            <RecipeListItems recipeEntryList={this.state.list} getId={this.grabTheId.bind(this)} />
           </div>
         )
       }
@@ -216,25 +216,18 @@
       getInitialState: function() {
         return {
           recipeName: '',
-          ingredients: ''
+          ingredients: '',
         };
       },
       recipeNameChange: function(e) {
-        console.log(1234);
         this.setState({recipeName: e.target.value});
       },
       ingredientsChange: function(e) {
-        console.log(5678);
         this.setState({ingredients: e.target.value});
       },
       submitRecipe: function(e) {
         e.preventDefault();
-        $('#myModal').modal('hide');
-        return this.props.newRecipe(this.state.recipeName,this.state.ingredients);
-      },
-      editRecipe: function(e) {
-        e.preventDefault();
-        $('#myModal').modal('hide');
+        $('#myModal').modal('toggle');
         return this.props.newRecipe(this.state.recipeName,this.state.ingredients);
       },
       render: function() {
@@ -271,7 +264,8 @@
       getInitialState: function() {
         return {
           recipeName: '',
-          ingredients: ''
+          ingredients: '',
+          id: ''
         };
       },
       recipeNameChange: function(e) {
@@ -282,10 +276,13 @@
         console.log("0909090909090909090");
         this.setState({ingredients: e.target.value});
       },
+      // uniqueId: function() {
+      //   console.log(jQuery('#myEditModal').attr('class'));
+      // }
       editSubmitRecipe: function(e) {
         e.preventDefault();
-        $('#myModal').modal('hide');
-        return this.props.blah(this.state.ingredients);
+        $('#myEditModal').modal('toggle');
+        return this.props.blah(this.state.recipeName, this.state.ingredients);
       },
       render: function() {
         return (
