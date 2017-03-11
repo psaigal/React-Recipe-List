@@ -13,68 +13,7 @@
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: 'Roboto Condensed', sans-serif;
-    }
-    #container {
-      margin-top: 30px;
-      height: 500px;
-    }
-    p {
-      font-size: 25px;
-    }
-    .separate {
-      margin: 10px 0 10px 0;
-      border: 1px solid #e3e3e3;
-    }
-    ul {
-      list-style-type: none;
-      padding:0px;
-    }
-    li {
-      font-size: 25px;
-      color:black;
-      text-align: center;
-    }
-    #add-button {
-      border: 1px solid green;
-      height: 200px;
-    }
-    input[type="text"] {
-      display: block;
-      margin : 0 auto;
-    }
-    #text-ingredients {
-      display: block;
-      margin : 0 auto;
-    }
-    .modal-header {
-      background-color: #5bc0de;
-    }
-    .modal-title {
-      color:white;
-    }
-    #submit-recipe {
-      display: block;
-      margin : 0 auto;
-    }
-    #open-recipe-modal {
-      margin-top: 25px;
-    }
-    .ingredients-container {
-      border-radius: 10px;
-      padding: 10px;
-      margin: 15px;
-      border: 1px solid #5bc0de;
-      color: #5bc0de;
-    }
-    #myEditModal {
-      z-index: 10000;
-      border: 2px solid red;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="recipeList.css">
 </head>
 
 <body>
@@ -87,22 +26,20 @@
   </div>
 
   <script type="text/babel">
-    var destination = document.querySelector("#container");
-
     var Ingredients = React.createClass({
       render: function() {
         var list = this.props.ingredientList;
         var formatIngredients = list.map(function(listItem){
           return(
-            <p>{listItem}</p>
+            <li>{listItem}</li>
           )
         },this)
         return (
           <div>
             <h3 className="text-center">Ingredients</h3>
-            <div id="ingredients-list">
+            <ul id="ingredients-list">
               {formatIngredients}
-            </div>
+            </ul>
           </div>
         )
       }
@@ -115,12 +52,10 @@
           id: this.props.getId
         };
       },
-      yolo: function(e) {
-        console.log("ewfwefwe")
+      getRecipeId: function(e) {
         this.props.getId(jQuery(e.target).attr('id'));
       },
       deleteRecipe: function(e) {
-        console.log(this.props.textIngredients + " blahblah");
         jQuery(e.target).parents('.recipe-list-item').remove();
       },
       render: function() {
@@ -130,7 +65,7 @@
             <div className="row">
               <div className="col-sm-12 text-center">
                 <button type="button" className="btn btn-info" onClick={this.deleteRecipe}>Delete</button>
-                <button onClick={this.yolo} id={this.state.recipeId} type="button" className="btn btn-info" data-toggle="modal" data-target="#myEditModal">Edit</button>
+                <button onClick={this.getRecipeId} id={this.state.recipeId} type="button" className="btn btn-info" data-toggle="modal" data-target="#myEditModal">Edit</button>
               </div>
             </div>
           </div>
@@ -141,16 +76,16 @@
     var RecipeListItems = React.createClass({
        getInitialState: function() {
         return {
-          sup:" "
+          ingList:" "
         };
       },
       handleClick: function(e){
         this.setState({
-          sup: jQuery(e.target).parent().parent('.recipe-list-item').find('#ingredients-list')
+          ingList: jQuery(e.target).parent().parent('.recipe-list-item').find('#ingredients-list')
         })
         e.preventDefault();
-        var blah = jQuery(e.target).parents('li').siblings().find('.collapse');
-        blah.collapse('toggle');
+        var toggleIngredients = jQuery(e.target).parents('li').siblings().find('.collapse');
+        toggleIngredients.collapse('toggle');
       },
       render: function() {
         var entries = this.props.recipeEntryList;
@@ -192,8 +127,6 @@
           list: listArray
         });
         listArray[listArray.length-1].description = listArray[listArray.length-1].description.split(',');
-        console.log(listArray);
-        console.log(this.state.list);
       },
       grabTheId: function(newId) {
         this.setState({
@@ -203,9 +136,9 @@
       editRecipe: function(id,name,ingredients) {
         var editElement;
         var listArray = this.state.list;
-        var blah = this.state.individualId;
+        var id = this.state.individualId;
         listArray.forEach(function(item){
-          if(item.key == blah) {
+          if(item.key == id) {
             item.name = name;
             item.description = ingredients;
           }
@@ -219,7 +152,7 @@
         return (
           <div>
             <AddModal newRecipe={this.addRecipe.bind(this)}  />
-            <EditModal blah={this.editRecipe.bind(this)} theId={this.state.individualId} />
+            <EditModal id={this.editRecipe.bind(this)} theId={this.state.individualId} />
             <RecipeListItems recipeEntryList={this.state.list} getId={this.grabTheId.bind(this)} />
           </div>
         )
@@ -283,11 +216,9 @@
         };
       },
       recipeNameChange: function(e) {
-        console.log("121212121212121212121212");
         this.setState({recipeName: e.target.value});
       },
       ingredientsChange: function(e) {
-        console.log("0909090909090909090");
         this.setState({ingredients: e.target.value});
       },
       setId: function() {

@@ -1,0 +1,68 @@
+body {
+      font-family: 'Roboto Condensed', sans-serif;
+    }
+    h1 {
+      font-size: 45px;
+      color: #5bc0de;
+    }
+    h3 {
+      font-size: 30px;
+      text-decoration: underline;
+    }
+    #container {
+      margin-top: 30px;
+      height: 500px;
+    }
+    p {
+      font-size: 25px;
+    }
+    .separate {
+      margin: 10px 0 10px 0;
+      border: 1px solid #e3e3e3;
+    }
+    ul {
+      list-style-type: none;
+      padding:0px;
+    }
+    li {
+      font-size: 25px;
+      color:black;
+      text-align: center;
+    }
+    #add-button {
+      border: 1px solid green;
+      height: 200px;
+    }
+    input[type="text"] {
+      display: block;
+      margin : 0 auto;
+    }
+    #text-ingredients {
+      display: block;
+      margin : 0 auto;
+    }
+    .modal-header {
+      background-color: #5bc0de;
+    }
+    .modal-title {
+      color:white;
+    }
+    #submit-recipe {
+      display: block;
+      margin : 0 auto;
+    }
+    #open-recipe-modal {
+      margin-top: 25px;
+      font-size: 20px;
+    }
+    .ingredients-container {
+      border-radius: 10px;
+      padding: 10px;
+      margin: 15px;
+      border: 1px solid #5bc0de;
+      color: #5bc0de;
+    }
+    #myEditModal {
+      z-index: 10000;
+      border: 2px solid red;
+    }
