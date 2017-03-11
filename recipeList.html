@@ -29,9 +29,9 @@
     var Ingredients = React.createClass({
       render: function() {
         var list = this.props.ingredientList;
-        var formatIngredients = list.map(function(listItem){
+        var formatIngredients = list.map(function(listItem, id){
           return(
-            <li>{listItem}</li>
+            <li key={id}>{listItem}</li>
           )
         },this)
         return (
@@ -90,10 +90,10 @@
       render: function() {
         var entries = this.props.recipeEntryList;
         var isEdited = this.props.edit;
-        var displayRecipeItems = entries.map(function(listItem){
+        var displayRecipeItems = entries.map(function(listItem,id){
           return(
-            <div>
-              <div className="recipe-list-item">
+            <div key={id}>
+              <div key={id} className="recipe-list-item">
                 <li className={listItem.key} key={listItem.key}><a href="#" onClick={this.handleClick.bind(this)} >{listItem.name}</a></li>
                 <div className="row">
                   <div className="span4 collapse-group">
