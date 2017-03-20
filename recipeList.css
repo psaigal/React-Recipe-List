@@ -5,7 +5,7 @@ body {
       font-size: 45px;
       color: #5bc0de;
     }
-    h3 {
+    h2 {
       font-size: 30px;
       text-decoration: underline;
     }
@@ -14,7 +14,16 @@ body {
       height: 500px;
     }
     p {
-      font-size: 25px;
+      font-size: 12px;
+      font-style: italic;
+    }
+    .btn-change {
+      margin: 10px;
+      font-size: 15px;
+      width:60px;
+    }
+    .button-container {
+      margin-top: 25px;
     }
     .separate {
       margin: 10px 0 10px 0;
